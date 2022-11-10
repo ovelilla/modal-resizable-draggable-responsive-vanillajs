@@ -205,7 +205,7 @@ class Resize {
     }
 
     top() {
-        this.style.top = Math.ceil(this.rect.top + this.diff.y);
+        this.style.top = this.rect.top + this.diff.y;
         this.style.height = this.curr.height - this.diff.y;
 
         if ((this.limit.y && this.curr.y > 0) || this.curr.height - this.diff.y < 208) {
@@ -243,7 +243,7 @@ class Resize {
     }
 
     left() {
-        this.style.left = Math.ceil(this.rect.left + this.diff.x);
+        this.style.left = this.rect.left + this.diff.x;
         this.style.width = this.curr.width - this.diff.x;
 
         if ((this.limit.x && this.curr.x > 0) || this.curr.width - this.diff.x < 300) {
