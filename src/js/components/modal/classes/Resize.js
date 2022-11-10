@@ -249,7 +249,7 @@ class Resize {
     }
 
     left() {
-        this.style.left = this.rect.left + this.diff.x;
+        this.style.left = Math.ceil(this.rect.left + this.diff.x);
         this.style.width = this.curr.width - this.diff.x;
 
         if (this.style.left + this.style.width > this.start.right) {
