@@ -63,14 +63,6 @@ class Drag {
         this.isDrag = true;
         this.onDrag(this.isDrag);
 
-        this.drag = this.handleDrag.bind(this);
-        this.end = this.handleEnd.bind(this);
-
-        document.addEventListener("mousemove", this.drag);
-        document.addEventListener("touchmove", this.drag, { passive: true });
-        document.addEventListener("mouseup", this.end);
-        document.addEventListener("touchend", this.end, { passive: true });
-
         this.start.x = e.clientX ?? e.touches[0].clientX;
         this.start.y = e.clientY ?? e.touches[0].clientY;
 
@@ -78,9 +70,17 @@ class Drag {
             this.el.classList.remove("fullscreen");
 
             this.el.firstChild.style.top = 0 + "px";
-            this.el.firstChild.style.width = this.maxWidth + "px";
+            this.el.firstChild.style.maxWidth = this.maxWidth + "px";
             this.el.firstChild.style.position = "absolute";
         }
+
+        this.drag = this.handleDrag.bind(this);
+        this.end = this.handleEnd.bind(this);
+
+        document.addEventListener("mousemove", this.drag);
+        document.addEventListener("touchmove", this.drag, { passive: true });
+        document.addEventListener("mouseup", this.end);
+        document.addEventListener("touchend", this.end, { passive: true });
     }
 
     handleDrag(e) {
