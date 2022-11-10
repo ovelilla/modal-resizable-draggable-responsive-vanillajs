@@ -1,0 +1,62 @@
+@use "../abstract/variables" as v;
+@use "../abstract/mixins" as m;
+
+.loading-btn {
+    position: relative;
+
+    &.loading {
+        pointer-events: none;
+
+        .loading-icon {
+            display: block;
+        }
+
+        .text {
+            display: none;
+        }
+    }
+
+    .loading-icon {
+        display: none;
+        width: 32px;
+        height: 32px;
+
+        svg {
+            animation: rotate 2s linear infinite;
+            height: 100%;
+            position: relative;
+            width: 100%;
+
+            circle {
+                stroke: #fff;
+                stroke-dasharray: 1, 200;
+                stroke-dashoffset: 0;
+                animation: dash 1.5s ease-in-out infinite;
+                stroke-linecap: round;
+            }
+        }
+
+        @keyframes rotate {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes dash {
+            0% {
+                stroke-dasharray: 1, 200;
+                stroke-dashoffset: 0;
+            }
+
+            50% {
+                stroke-dasharray: 89, 200;
+                stroke-dashoffset: -35;
+            }
+
+            100% {
+                stroke-dasharray: 89, 200;
+                stroke-dashoffset: -124;
+            }
+        }
+    }
+}
