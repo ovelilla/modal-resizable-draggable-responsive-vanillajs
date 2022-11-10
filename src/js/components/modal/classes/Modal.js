@@ -53,7 +53,7 @@ class Modal {
         content.classList.add("content");
 
         if (this.maxWidth) {
-            content.style.maxWidth = this.maxWidth;
+            content.style.maxWidth = this.maxWidth + "px";
         } else {
             content.style.maxWidth = "600px";
         }
@@ -162,6 +162,7 @@ class Modal {
 
         const resize = new Resize({
             el: modal,
+            maxWidth: this.maxWidth,
             onResize: (isResize) => {
                 drag.isResize = isResize;
             },
@@ -169,7 +170,9 @@ class Modal {
 
         const drag = new Drag({
             el: modal,
+            maxWidth: this.maxWidth,
             onDrag: (isDrag) => {
+                this.isFullscreen = false;
                 resize.isDrag = isDrag;
             },
         });

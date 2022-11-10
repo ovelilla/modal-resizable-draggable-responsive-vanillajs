@@ -104,13 +104,17 @@ class Resize {
         if (!this.isStart) {
             return;
         }
-        console.log("rstart");
 
         this.isResize = true;
         this.onResize(this.isResize);
 
-        this.el.classList.remove("fullscreen");
-        this.el.firstChild.style.position = "absolute";
+        if (this.el.classList.contains("fullscreen")) {
+            this.el.classList.remove("fullscreen");
+
+            this.el.firstChild.style.top = 0 + "px";
+            this.el.firstChild.style.width = this.maxWidth + "px";
+            this.el.firstChild.style.position = "absolute";
+        }
 
         const rect = this.el.firstChild.getBoundingClientRect();
 
@@ -118,6 +122,7 @@ class Resize {
         this.el.firstChild.style.left = rect.left + "px";
         this.el.firstChild.style.width = rect.width + "px";
         this.el.firstChild.style.height = rect.height + "px";
+        this.el.firstChild.style.position = "absolute";
 
         this.start.x = e.clientX ?? e.touches[0].clientX;
         this.start.y = e.clientY ?? e.touches[0].clientY;

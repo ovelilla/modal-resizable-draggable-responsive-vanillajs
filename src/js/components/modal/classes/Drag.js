@@ -47,7 +47,6 @@ class Drag {
         const headerHeight = header.offsetHeight;
 
         if (x > 10 && x < width - 10 && y > 10 && y < headerHeight) {
-            console.log("entra");
             this.isStart = true;
             this.el.classList.add("drag");
         } else {
@@ -60,7 +59,6 @@ class Drag {
         if (!this.isStart) {
             return;
         }
-        console.log("dstart");
 
         this.isDrag = true;
         this.onDrag(this.isDrag);
@@ -75,6 +73,14 @@ class Drag {
 
         this.start.x = e.clientX ?? e.touches[0].clientX;
         this.start.y = e.clientY ?? e.touches[0].clientY;
+
+        if (this.el.classList.contains("fullscreen")) {
+            this.el.classList.remove("fullscreen");
+
+            this.el.firstChild.style.top = 0 + "px";
+            this.el.firstChild.style.width = this.maxWidth + "px";
+            this.el.firstChild.style.position = "absolute";
+        }
     }
 
     handleDrag(e) {
@@ -92,9 +98,9 @@ class Drag {
         this.style.top = rect.top + this.curr.y;
         this.style.left = rect.left + this.curr.x;
 
-        this.el.firstChild.style.position = "absolute";
         this.el.firstChild.style.top = this.style.top + "px";
         this.el.firstChild.style.left = this.style.left + "px";
+        this.el.firstChild.style.position = "absolute";
     }
 
     handleEnd() {

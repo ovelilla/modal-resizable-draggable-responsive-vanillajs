@@ -66,6 +66,7 @@ class IconButton {
         });
         iconButton.addEventListener("mousedown", (e) => e.stopPropagation());
         iconButton.addEventListener("touchstart", (e) => e.stopPropagation(), { passive: true });
+        iconButton.addEventListener("mousemove", (e) => e.stopPropagation());
 
         iconButton.appendChild(this.icon);
 

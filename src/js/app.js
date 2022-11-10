@@ -13,7 +13,7 @@ openModalBtn.addEventListener("click", async () => {
         //     return logo;
         // },
         content: modalContent(),
-        maxWidth: "700px",
+        maxWidth: 700,
         autoOpen: true,
         fullscreen: true,
         confirmClose: true,
