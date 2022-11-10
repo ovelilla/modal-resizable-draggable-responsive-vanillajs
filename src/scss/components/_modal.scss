@@ -83,9 +83,13 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 15px 15px 15px 25px;
+        padding: 10px 15px 10px 25px;
         border-bottom: 1px solid v.$gray-200;
         user-select: none;
+
+        @include m.mobile {
+            padding: 15px 15px 15px 25px;
+        }
 
         .title {
             font-size: 1.8rem;
