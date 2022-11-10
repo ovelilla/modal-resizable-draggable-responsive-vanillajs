@@ -124,7 +124,9 @@ class Resize {
         this.start.width = rect.width;
         this.start.height = rect.height;
         this.start.top = rect.top;
+        this.start.bottom = rect.bottom;
         this.start.left = rect.left;
+        this.start.right = rect.right;
 
         this.limit.x = false;
         this.limit.y = false;
@@ -205,8 +207,12 @@ class Resize {
     }
 
     top() {
-        this.style.top = this.rect.top + this.diff.y;
+        this.style.top = Math.ceil(this.rect.top + this.diff.y);
         this.style.height = this.curr.height - this.diff.y;
+
+        if (this.style.top + this.style.height > this.start.bottom) {
+            this.style.top = this.start.bottom - this.style.height;
+        }
 
         if ((this.limit.y && this.curr.y > 0) || this.curr.height - this.diff.y < 208) {
             this.limit.y = true;
