@@ -1,6 +1,6 @@
 # modal-resizable-draggable-responsive-vanillajs
 
-Responsive vanilla JavaScript confirm dailog
+Responsive resizable and draggable vanilla JavaScript modal
 
 Demo: https://iridescent-parfait-865a98.netlify.app
 
