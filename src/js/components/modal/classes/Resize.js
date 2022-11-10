@@ -252,6 +252,10 @@ class Resize {
         this.style.left = this.rect.left + this.diff.x;
         this.style.width = this.curr.width - this.diff.x;
 
+        if (this.style.left + this.style.width > this.start.right) {
+            this.style.left = this.start.right - this.style.width;
+        }
+
         if ((this.limit.x && this.curr.x > 0) || this.curr.width - this.diff.x < 300) {
             this.limit.x = true;
 
