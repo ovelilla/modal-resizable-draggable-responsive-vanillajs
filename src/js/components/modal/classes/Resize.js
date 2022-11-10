@@ -214,6 +214,10 @@ class Resize {
             this.style.top = this.start.bottom - this.style.height;
         }
 
+        if (this.style.top + this.style.height < this.start.bottom) {
+            this.style.top = this.start.bottom - this.style.height;
+        }
+
         if ((this.limit.y && this.curr.y > 0) || this.curr.height - this.diff.y < 208) {
             this.limit.y = true;
 
@@ -253,6 +257,10 @@ class Resize {
         this.style.width = this.curr.width - this.diff.x;
 
         if (this.style.left + this.style.width > this.start.right) {
+            this.style.left = this.start.right - this.style.width;
+        }
+
+        if (this.style.left + this.style.width < this.start.right) {
             this.style.left = this.start.right - this.style.width;
         }
 
