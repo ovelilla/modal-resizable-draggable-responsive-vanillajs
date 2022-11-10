@@ -1,7 +1,8 @@
 class Resize {
     constructor(data) {
         Object.assign(this, data);
-   
+
+        this.isStart = false;
         this.isResize = false;
         this.isDrag = false;
 
@@ -44,9 +45,10 @@ class Resize {
     }
 
     init() {
-        this.startEvent = this.handleStart.bind(this);
         this.el.addEventListener("mousemove", this.handleMove.bind(this));
         this.el.addEventListener("touchstart", this.handleMove.bind(this), { passive: true });
+        this.el.addEventListener("mousedown", this.handleStart.bind(this));
+        this.el.addEventListener("touchstart", this.handleStart.bind(this), { passive: true });
     }
 
     handleMove(e) {
@@ -63,6 +65,7 @@ class Resize {
         const height = rect.height;
 
         let direction = "";
+        this.isStart = true;
 
         if (x > 10 && x < width - 10 && y >= -10 && y <= 10) {
             direction = "top";
@@ -80,28 +83,29 @@ class Resize {
             direction = "left";
         } else if (x >= -10 && x <= 10 && y >= -10 && y <= 10) {
             direction = "top-left";
+        } else {
+            this.isStart = false;
         }
 
-        if (direction === this.direction) {
+        if (this.direction === direction) {
             return;
         }
 
         this.el.classList.remove("resize-" + this.direction);
 
-        if (direction) {
+        if (this.isStart) {
             this.el.classList.add("resize-" + direction);
-
-            this.el.addEventListener("mousedown", this.startEvent);
-            this.el.addEventListener("touchstart", this.startEvent, { passive: true });
-        } else {
-            this.el.removeEventListener("mousedown", this.startEvent);
-            this.el.removeEventListener("touchstart", this.startEvent, { passive: true });
         }
 
         this.direction = direction;
     }
 
     handleStart(e) {
+        if (!this.isStart) {
+            return;
+        }
+        console.log("rstart");
+
         this.isResize = true;
         this.onResize(this.isResize);
 
@@ -253,7 +257,8 @@ class Resize {
         }
     }
 
-    handleEnd(e) {
+    handleEnd() {
+        this.isStart = false;
         this.isResize = false;
         this.onResize(this.isResize);
 

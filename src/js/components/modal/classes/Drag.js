@@ -2,6 +2,7 @@ class Drag {
     constructor(data) {
         Object.assign(this, data);
 
+        this.isStart = false;
         this.isDrag = false;
         this.isResize = false;
 
@@ -24,9 +25,10 @@ class Drag {
     }
 
     init() {
-        this.startEvent = this.handleStart.bind(this);
         this.el.addEventListener("mousemove", this.handleMove.bind(this));
         this.el.addEventListener("touchstart", this.handleMove.bind(this), { passive: true });
+        this.el.addEventListener("mousedown", this.handleStart.bind(this));
+        this.el.addEventListener("touchstart", this.handleStart.bind(this), { passive: true });
     }
 
     handleMove(e) {
@@ -44,20 +46,22 @@ class Drag {
         const header = this.el.querySelector(".header");
         const headerHeight = header.offsetHeight;
 
-        this.el.removeEventListener("mousedown", this.startEvent);
-        this.el.removeEventListener("touchstart", this.startEvent, { passive: true });
-
         if (x > 10 && x < width - 10 && y > 10 && y < headerHeight) {
+            console.log("entra");
+            this.isStart = true;
             this.el.classList.add("drag");
-
-            this.el.addEventListener("mousedown", this.startEvent);
-            this.el.addEventListener("touchstart", this.startEvent, { passive: true });
         } else {
+            this.isStart = false;
             this.el.classList.remove("drag");
         }
     }
 
     handleStart(e) {
+        if (!this.isStart) {
+            return;
+        }
+        console.log("dstart");
+
         this.isDrag = true;
         this.onDrag(this.isDrag);
 
@@ -94,6 +98,7 @@ class Drag {
     }
 
     handleEnd() {
+        this.isStart = false;
         this.isDrag = false;
         this.onDrag(this.isDrag);
 
