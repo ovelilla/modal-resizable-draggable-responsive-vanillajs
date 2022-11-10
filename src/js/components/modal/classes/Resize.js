@@ -1,8 +1,9 @@
 class Resize {
-    constructor(el) {
-        this.el = el;
-
+    constructor(data) {
+        Object.assign(this, data);
+   
         this.isResize = false;
+        this.isDrag = false;
 
         this.direction = "";
 
@@ -11,6 +12,8 @@ class Resize {
             y: 0,
             width: 0,
             height: 0,
+            top: 0,
+            left: 0,
         };
 
         this.curr = {
@@ -41,82 +44,93 @@ class Resize {
     }
 
     init() {
+        this.startEvent = this.handleStart.bind(this);
         this.el.addEventListener("mousemove", this.handleMove.bind(this));
         this.el.addEventListener("touchstart", this.handleMove.bind(this), { passive: true });
-        this.el.addEventListener("mousedown", this.handleStart.bind(this));
-        this.el.addEventListener("touchstart", this.handleStart.bind(this), { passive: true });
     }
 
     handleMove(e) {
-        if (this.isResize) {
+        if (this.isResize || this.isDrag) {
             return;
         }
 
-        this.rect = this.el.firstChild.getBoundingClientRect();
+        const rect = this.el.firstChild.getBoundingClientRect();
 
-        const x = (e.clientX ?? e.touches[0].clientX) - this.rect.left;
-        const y = (e.clientY ?? e.touches[0].clientY) - this.rect.top;
+        const x = (e.clientX ?? e.touches[0].clientX) - rect.left;
+        const y = (e.clientY ?? e.touches[0].clientY) - rect.top;
 
-        const width = this.rect.width;
-        const height = this.rect.height;
+        const width = rect.width;
+        const height = rect.height;
 
-        this.el.classList.forEach((className) => {
-            if (className.startsWith("resize")) {
-                this.el.classList.remove(className);
-            }
-        });
-
-        this.direction = "";
+        let direction = "";
 
         if (x > 10 && x < width - 10 && y >= -10 && y <= 10) {
-            this.direction = "top";
+            direction = "top";
         } else if (x >= width - 10 && x <= width + 10 && y >= -10 && y <= 10) {
-            this.direction = "top-right";
+            direction = "top-right";
         } else if (x >= width - 10 && x <= width + 10 && y > 10 && y < height - 10) {
-            this.direction = "right";
+            direction = "right";
         } else if (x >= -10 && x <= 10 && y >= height - 10 && y <= height + 10) {
-            this.direction = "bottom-left";
+            direction = "bottom-left";
         } else if (x > 10 && x < width - 10 && y >= height - 10 && y <= height + 10) {
-            this.direction = "bottom";
+            direction = "bottom";
         } else if (x >= width - 10 && x <= width + 10 && y >= height - 10 && y <= height + 10) {
-            this.direction = "bottom-right";
+            direction = "bottom-right";
         } else if (x >= -10 && x <= 10 && y > 10 && y < height - 10) {
-            this.direction = "left";
+            direction = "left";
         } else if (x >= -10 && x <= 10 && y >= -10 && y <= 10) {
-            this.direction = "top-left";
+            direction = "top-left";
         }
 
-        if (this.direction) {
-            this.el.classList.add("resize");
-            this.el.classList.add("resize-" + this.direction);
+        if (direction === this.direction) {
+            return;
         }
+
+        this.el.classList.remove("resize-" + this.direction);
+
+        if (direction) {
+            this.el.classList.add("resize-" + direction);
+
+            this.el.addEventListener("mousedown", this.startEvent);
+            this.el.addEventListener("touchstart", this.startEvent, { passive: true });
+        } else {
+            this.el.removeEventListener("mousedown", this.startEvent);
+            this.el.removeEventListener("touchstart", this.startEvent, { passive: true });
+        }
+
+        this.direction = direction;
     }
 
     handleStart(e) {
         this.isResize = true;
+        this.onResize(this.isResize);
 
         this.el.classList.remove("fullscreen");
         this.el.firstChild.style.position = "absolute";
 
-        this.el.firstChild.style.top = this.rect.top + "px";
-        this.el.firstChild.style.left = this.rect.left + "px";
-        this.el.firstChild.style.width = this.rect.width + "px";
-        this.el.firstChild.style.height = this.rect.height + "px";
+        const rect = this.el.firstChild.getBoundingClientRect();
+
+        this.el.firstChild.style.top = rect.top + "px";
+        this.el.firstChild.style.left = rect.left + "px";
+        this.el.firstChild.style.width = rect.width + "px";
+        this.el.firstChild.style.height = rect.height + "px";
 
         this.start.x = e.clientX ?? e.touches[0].clientX;
         this.start.y = e.clientY ?? e.touches[0].clientY;
 
-        this.start.width = this.rect.width;
-        this.start.height = this.rect.height;
+        this.start.width = rect.width;
+        this.start.height = rect.height;
+        this.start.top = rect.top;
+        this.start.left = rect.left;
 
         this.limit.x = false;
         this.limit.y = false;
 
-        this.move = this.handleResize.bind(this);
+        this.resize = this.handleResize.bind(this);
         this.end = this.handleEnd.bind(this);
 
-        document.addEventListener("mousemove", this.move);
-        document.addEventListener("touchmove", this.move, { passive: true });
+        document.addEventListener("mousemove", this.resize);
+        document.addEventListener("touchmove", this.resize, { passive: true });
         document.addEventListener("mouseup", this.end);
         document.addEventListener("touchend", this.end);
     }
@@ -188,13 +202,13 @@ class Resize {
     }
 
     top() {
-        this.style.top = this.rect.top + this.diff.y;
+        this.style.top = Math.ceil(this.rect.top + this.diff.y);
         this.style.height = this.curr.height - this.diff.y;
 
         if ((this.limit.y && this.curr.y > 0) || this.curr.height - this.diff.y < 208) {
             this.limit.y = true;
 
-            this.style.top = this.rect.top;
+            this.style.top = this.start.top + this.start.height - 208;
             this.style.height = 208;
         } else {
             this.limit.y = false;
@@ -226,13 +240,13 @@ class Resize {
     }
 
     left() {
-        this.style.left = this.rect.left + this.diff.x;
+        this.style.left = Math.ceil(this.rect.left + this.diff.x);
         this.style.width = this.curr.width - this.diff.x;
 
         if ((this.limit.x && this.curr.x > 0) || this.curr.width - this.diff.x < 300) {
             this.limit.x = true;
 
-            this.style.left = this.rect.left;
+            this.style.left = this.start.left + this.start.width - 300;
             this.style.width = 300;
         } else {
             this.limit.x = false;
@@ -241,9 +255,10 @@ class Resize {
 
     handleEnd(e) {
         this.isResize = false;
+        this.onResize(this.isResize);
 
-        document.removeEventListener("mousemove", this.move);
-        document.removeEventListener("touchmove", this.move);
+        document.removeEventListener("mousemove", this.resize);
+        document.removeEventListener("touchmove", this.resize);
         document.removeEventListener("mouseup", this.end);
         document.removeEventListener("touchend", this.end);
     }

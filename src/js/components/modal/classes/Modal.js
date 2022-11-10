@@ -160,8 +160,19 @@ class Modal {
             }
         });
 
-        new Resize(modal);
-        new Drag(modal);
+        const resize = new Resize({
+            el: modal,
+            onResize: (isResize) => {
+                drag.isResize = isResize;
+            },
+        });
+
+        const drag = new Drag({
+            el: modal,
+            onDrag: (isDrag) => {
+                resize.isDrag = isDrag;
+            },
+        });
 
         return modal;
     }

@@ -1,8 +1,9 @@
 class Drag {
-    constructor(el) {
-        this.el = el;
+    constructor(data) {
+        Object.assign(this, data);
 
         this.isDrag = false;
+        this.isResize = false;
 
         this.start = {
             x: 0,
@@ -23,36 +24,42 @@ class Drag {
     }
 
     init() {
+        this.startEvent = this.handleStart.bind(this);
         this.el.addEventListener("mousemove", this.handleMove.bind(this));
         this.el.addEventListener("touchstart", this.handleMove.bind(this), { passive: true });
-        this.el.addEventListener("mousedown", this.handleStart.bind(this));
-        this.el.addEventListener("touchstart", this.handleStart.bind(this), { passive: true });
     }
 
     handleMove(e) {
+        if (this.isDrag || this.isResize) {
+            return;
+        }
+
+        const rect = this.el.firstChild.getBoundingClientRect();
+
+        const x = (e.clientX ?? e.touches[0].clientX) - rect.left;
+        const y = (e.clientY ?? e.touches[0].clientY) - rect.top;
+
+        const width = rect.width;
+
         const header = this.el.querySelector(".header");
+        const headerHeight = header.offsetHeight;
 
-        this.rect = this.el.firstChild.getBoundingClientRect();
+        this.el.removeEventListener("mousedown", this.startEvent);
+        this.el.removeEventListener("touchstart", this.startEvent, { passive: true });
 
-        const x = (e.clientX ?? e.touches[0].clientX) - this.rect.left;
-        const y = (e.clientY ?? e.touches[0].clientY) - this.rect.top;
-
-        const width = this.rect.width;
-        const height = header.offsetHeight;
-
-        if (x > 10 && x < width - 10 && y > 10 && y < height) {
+        if (x > 10 && x < width - 10 && y > 10 && y < headerHeight) {
             this.el.classList.add("drag");
-            this.isDrag = true;
+
+            this.el.addEventListener("mousedown", this.startEvent);
+            this.el.addEventListener("touchstart", this.startEvent, { passive: true });
         } else {
             this.el.classList.remove("drag");
-            this.isDrag = false;
         }
     }
 
     handleStart(e) {
-        if (!this.isDrag) {
-            return;
-        }
+        this.isDrag = true;
+        this.onDrag(this.isDrag);
 
         this.drag = this.handleDrag.bind(this);
         this.end = this.handleEnd.bind(this);
@@ -88,6 +95,7 @@ class Drag {
 
     handleEnd() {
         this.isDrag = false;
+        this.onDrag(this.isDrag);
 
         document.removeEventListener("mousemove", this.drag);
         document.removeEventListener("touchmove", this.drag, { passive: true });
