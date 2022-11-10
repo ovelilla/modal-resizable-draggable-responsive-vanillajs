@@ -2,7 +2,7 @@
 
 Responsive resizable and draggable vanilla JavaScript modal
 
-Demo: https://iridescent-parfait-865a98.netlify.app
+Demo: https://regal-cheesecake-05c578.netlify.app/
 
 ```
 import Modal from "./components/modal";
