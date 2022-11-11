@@ -1,7 +1,7 @@
 import Resize from "./Resize";
 import Drag from "./Drag";
 import Confirm from "../../confirm";
-import Button from "./Button";
+import Button from "../../button";
 import { icons } from "../modules/Icons";
 import { tools } from "../modules/Tools";
 

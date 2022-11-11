@@ -18,6 +18,7 @@ class IconButton {
 
         iconButton.type = this.type ?? "button";
         iconButton.ariaLabel = this.ariaLabel ?? "";
+        iconButton.disabled = this.disabled ?? false;
 
         iconButton.classList.add("icon-btn");
 
