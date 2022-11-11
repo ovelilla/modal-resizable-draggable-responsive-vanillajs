@@ -77,16 +77,18 @@ class Modal {
         actions.classList.add("actions");
         header.appendChild(actions);
 
-        this.headerActions.forEach((action) => {
-            const button = new Button("IconButton", {
-                icon: action.icon,
-                buttonSize: "large",
-                svgSize: "large",
-                ariaLabel: action.ariaLabel,
-                onClick: action.onClick,
+        if (this.headerActions) {
+            this.headerActions.forEach((action) => {
+                const button = new Button("IconButton", {
+                    icon: action.icon,
+                    buttonSize: "large",
+                    svgSize: "large",
+                    ariaLabel: action.ariaLabel,
+                    onClick: action.onClick,
+                });
+                actions.appendChild(button.get());
             });
-            actions.appendChild(button.get());
-        });
+        }
 
         if (this.fullscreen) {
             const button = new Button("IconButton", {
@@ -145,20 +147,22 @@ class Modal {
         });
         footer.appendChild(closeButton.get());
 
-        this.footerActions.forEach((action) => {
-            const button = new Button(action.loading ? "LoadingButton" : "TextButton", {
-                type: action.type,
-                text: action.text,
-                ariaLabel: action.ariaLabel,
-                classes: action.classes,
-                onClick: action.onClick,
-            });
-            footer.appendChild(button.get());
+        if (this.footerActions) {
+            this.footerActions.forEach((action) => {
+                const button = new Button(action.loading ? "LoadingButton" : "TextButton", {
+                    type: action.type,
+                    text: action.text,
+                    ariaLabel: action.ariaLabel,
+                    classes: action.classes,
+                    onClick: action.onClick,
+                });
+                footer.appendChild(button.get());
 
-            if (action.loading) {
-                this.loadingButtons.push(button);
-            }
-        });
+                if (action.loading) {
+                    this.loadingButtons.push(button);
+                }
+            });
+        }
 
         const resize = new Resize({
             el: modal,
