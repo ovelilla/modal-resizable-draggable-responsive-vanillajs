@@ -42,9 +42,6 @@ class Modal {
     render() {
         const modal = document.createElement("div");
         modal.classList.add("modal");
-        if (this.isFullscreen) {
-            modal.classList.add("fullscreen");
-        }
         modal.addEventListener("mousedown", this.checkClose.bind(this));
         modal.addEventListener("touchstart", this.checkClose.bind(this), { passive: true });
         modal.addEventListener("click", this.handleClose.bind(this));
